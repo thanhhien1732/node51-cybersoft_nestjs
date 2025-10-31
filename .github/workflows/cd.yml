@@ -1,0 +1,15 @@
+name: cd
+
+on: 
+    workflow_run:
+        workflows: ["ci"]
+        types:
+            - completed
+
+jobs:
+    start:
+        runs-on: be-cyber_community
+
+        steps:
+            - name: chạy lần đầu
+              run: sudo docker compose

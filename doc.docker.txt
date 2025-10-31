@@ -126,3 +126,80 @@ Cách 2:
 | 11. Chọn Add secret
 | 12. Vào ci.yml và thêm ${{secrets.DOCKER_PASS}} vào run: docker login -u thanhhienngo 
 |       run: docker login -u thanhhienngo -p ${{secrets.DOCKER_PASS}}
+| 13. Xem ở Actions trong Github
+
+# CD
+| 1. Tạo folder .github/
+|                   workflows/
+|                       cd.yml
+============= AWS ============ 
+| 2. Vào trang console.aws.com
+| 3. Search: EC2 
+| 4. Chọn Launch instance
+| 5. Chuyển sever sang Singapore
+| 6. Điền form
+|       Name: <đặt_tên>
+|       Quick Start: Ubuntu
+|       Instance type: t3.small
+|       Key pair (login) -> Create new key pair (Nếu đã tạo trước đó thì không cần Create nữa)
+|           Key pair name: <đặt tên>
+|           Còn lại để mặc định và bấm [Create key pair]  (sẽ có file .pem được download về)
+| 7. Chọn Launch instance
+| 8. Trở về Instances 
+| 9. Click vào Instance ID vừa mới tạo
+| 10. Bấm vào nút Connect 
+| 11. Chọn SSH client
+| 12. Ở máy tính đến folder <AWS> có chứa file .pem lúc [Create key pair] 
+| 13. Nhấn chuột phải vào folder <AWS> chọn Mở trong Bảng điều khiển
+| 14. Copy dòng ssh -i ... ở Example và paste vào terminal
+| 15. Nhập lệnh Ubuntu vào terminal
+|       ls -la
+|       mkdir home
+|       ls -la
+|       cd home/
+(Copy code từ https://docs.docker.com/)
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update   
+
+# Kiểm tra
+sudo systemctl status docker
+
+| 16. Vào repository GitHub của dự án 
+| 17. Chọn Settings
+| 18. Vào Actions/Runners
+| 19. Tại Runner image: Chọn Linux
+| 20. Copy và Paste tất cả câu lệnh ở phần Download vào Terminal
+| 21. Copy và Paste câu lệnh đầu tiên ở Configure vào Terminal
+|       - Đến phần: Enter any additional labels (ex. label-1,label-2): [press Enter to skip] 
+|       - Nhập tên backend: be-cyber_community
+|       Enter any additional labels (ex. label-1,label-2): [press Enter to skip] be-cyber_community
+| 22. Copy và Paste 2 câu lệnh này vào Terminal
+|       sudo ./svc.sh install
+|       sudo ./svc.sh start
+| 23. Quay lại Actions/Runners ở GitHub và F5 lại  (nếu thấy hoàn toàn chấm xanh là thành công)
+| Như vậy GitHub và Server AWS đã kết nối được với nhau
+| 24. Tiếp tục viết lệnh cho cd.yml
+
+# Lệnh Ubuntu hay dùng
+    ls -la: show tất cả folder
+    rmdir -rf: xóa folder
+    touch: tạo file
+    rm: xóa file
+    cd: di chuyển tới foler
+
+    Chạy online runner 
+    sudo ./svc.sh install
+    sudo ./svc.sh start
