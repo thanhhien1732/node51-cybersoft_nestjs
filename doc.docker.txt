@@ -1,0 +1,128 @@
+doc Dockerfile: https://docs.docker.com/reference/dockerfile/
+
+PORT:
+3070: docker    (có thể custom)
+3069: local     (có thể custom)
+3307: database  (có thể custom)
+3306: mysql
+
+## IMAGE
+
+# Buid image
+        docker image build -t <ten_image_tu_dat>:latest .
+Ví dụ:  docker image build -t thanhhienngo/img-be_cyber_community:latest .
+
+# Show tất cả image đang có
+    docker image list
+    docker image ls
+
+# Xóa image
+    docker image remove id_ten_image
+    docker image rmi id_ten_image
+
+
+# Công cụ phân tích image dive (phải cài với quyền admin- chỉ cần cài 1 lần global)
+| brew install dive       # macOS
+| sudo apt install dive   # Linux
+| choco install dive      # Windows
+
+| dive --version
+| dive <your-image-tag>  (dive img-be_cyber_community)
+
+## CONTAINER
+# show tất cả container
+    docker container list (show những container đang online)
+    docker container ls
+    docker ps
+    -a (show tất cả các container kể cả container đang offline)
+        docker container list -a
+        docker container ls -a
+        docker ps -a
+
+# Tạo container
+    docker container run --env-file .env --name con-be_cyber_community -p 3070:3069 -d img-be_cyber_community
+    --env-file: đọc dữ liệu bên trong file env và nạp vào biến môi trường của docker
+    --name: đặt cho container
+    -p: quy định cổng mà FE sẽ kết nối
+    -d: chạy ngầm, không chiếm dụng terminal
+    TÊN IMAGE LUÔN ĐỂ CUỐI CÙNG
+    kiểm tra xem image đã có trong máy hay chưa
+        - có: ưu tiên dùng trong máy 
+        - chưa: tự lên docker hub tìm và tải về
+
+# Kiểm tra log container (source)
+    docker logs id_ten_image
+    docker logs -f id_ten_image
+        -f: bắt dính cập nhật log mới nhất (chỉ khi container start)
+
+# Chạy container
+    docker container start id_ten_container
+
+# Xóa container
+    docker container remove id_ten_container
+    docker container rm id_ten_container
+
+## Docker Compose
+    start
+        docker compose up -d
+    stop
+        docker compose down
+
+# Kết hợp
+    docker image remove img-be_cyber_community && docker image build -t img-be_cyber_community .
+
+    docker container remove con-be_cyber_community && docker container run --env-file .env --name con-be_cyber_community -p 3070:3069 -d img-be_cyber_community
+
+
+## Kết nối giữa 2 container với nhau
+    node-51-mysql == con-be_cyber_community
+Cách 1:
+| 1. Click vào container của node-51-mysql ở docker 
+| 2. Ở giao diện detail của node-51-mysql chọn mục Inspect
+| 3. Sau đó chọn phần Networks
+| 4. Tìm tới "IPAddress": "172.17.0.2",
+| 5. Copy 172.17.0.2 và dán và đè vào localhost của DATABASE_URL ở file .env
+| 6. Ở file .env Đổi port thành 3306 của mysql
+|    DATABASE_URL=mysql://root:1234@172.17.0.2:3306/db_cyber_community 
+| 7. Chạy lệnh: docker container remove con-be_cyber_community && docker container run --env-file .env --name con-be_cyber_community -p 3070:3069 -d img-be_cyber_community
+
+Cách 2:
+| 1. Tạo file: docker-compose.yml
+| 2. Chạy lệnh: docker compose up -d
+| 3. Ở file .env: DATABASE_URL=mysql://root:1234@con-db_cyber_community:3306/db_cyber_community
+
+=> Vào trang Swagger: http://localhost:3070/api-docs   # không cần chạy npm run start:dev
+
+
+## Đưa lên DockerHub
+| 1. docker login     
+| 2. docker push <ten_image>:latest
+|    docker push thanhhienngo/img-be_cyber_community:latest
+
+
+## CI/CD
+# CI
+| 1. Tạo folder .github/
+|                   workflows/
+|                       ci.yml
+| 2. Lên trang Account settings của DockerHub
+|  - Vào Personal access token 
+|  - Chọn Generate new token       
+|       Access token description: <đặt tên>
+|       Access permission: Read, Write, Delete  
+|  - Chọn Generate 
+| 3. Copy vùng Run 
+|       docker login -u thanhhienngo
+| 4. Paste vào ci.yml
+|       run: docker login -u thanhhienngo      
+| 5. Copy vùng At the password prompt, enter the personal access token.
+| 6. Vào repository GitHub của dự án 
+| 7. Vào Settings
+| 8. Chọn Secrets and variables/Actions
+| 9. Chọn New responsitory secret ở phần Repository secrets
+| 10. Điền form
+|        Name: <đặt_tên>
+|        secret: <paster_từ_dockerhub>
+| 11. Chọn Add secret
+| 12. Vào ci.yml và thêm ${{secrets.DOCKER_PASS}} vào run: docker login -u thanhhienngo 
+|       run: docker login -u thanhhienngo -p ${{secrets.DOCKER_PASS}}
