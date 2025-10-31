@@ -1,0 +1,21 @@
+name: ci
+
+on:
+    push:
+        branches: ["main"]
+            
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Đăng nhập docker hub
+              run: docker login -u thanhhienngo -p ${{secrets.DOCKER_PASS}}
+
+            - name: Build image 
+              run: docker build -t thanhhienngo/img-be_cyber_community:latest .
+
+            - name: Push image lên docker hub
+              run: docker push thanhhienngo/img-be_cyber_community:latest
