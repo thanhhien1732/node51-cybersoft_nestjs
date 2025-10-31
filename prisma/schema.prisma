@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Articles {
+  id        Int       @id @default(autoincrement())
+  title     String?   @db.VarChar(255)
+  content   String?   @db.Text
+  imageUrl  String?   @db.VarChar(500)
+  views     Int       @default(0)
+  userId    Int
+  deletedBy Int       @default(0)
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime? @db.Timestamp(0)
+  createdAt DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt DateTime  @default(now()) @db.Timestamp(0)
+}
+
+model ChatGroupMembers {
+  id          Int         @id @default(autoincrement())
+  userId      Int?
+  chatGroupId Int?
+  deletedBy   Int         @default(0)
+  isDeleted   Boolean     @default(false)
+  deletedAt   DateTime?   @db.Timestamp(0)
+  createdAt   DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt   DateTime    @default(now()) @db.Timestamp(0)
+  Users       Users?      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ChatGroupMembers_ibfk_1")
+  ChatGroups  ChatGroups? @relation(fields: [chatGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ChatGroupMembers_ibfk_2")
+
+  @@index([chatGroupId], map: "chatGroupId")
+  @@index([userId], map: "userId")
+}
+
+model ChatGroups {
+  id               Int                @id @default(autoincrement())
+  keyForChatOne    String?            @unique(map: "keyForChatOne") @db.VarChar(255)
+  name             String?            @db.VarChar(255)
+  ownerId          Int?
+  deletedBy        Int                @default(0)
+  isDeleted        Boolean            @default(false)
+  deletedAt        DateTime?          @db.Timestamp(0)
+  createdAt        DateTime           @default(now()) @db.Timestamp(0)
+  updatedAt        DateTime           @default(now()) @db.Timestamp(0)
+  ChatGroupMembers ChatGroupMembers[]
+  Users            Users?             @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ChatGroups_ibfk_1")
+  ChatMessages     ChatMessages[]
+
+  @@index([ownerId], map: "ownerId")
+}
+
+model ChatMessages {
+  id           Int        @id @default(autoincrement())
+  chatGroupId  Int
+  userIdSender Int
+  messageText  String?    @db.Text
+  deletedBy    Int        @default(0)
+  isDeleted    Boolean    @default(false)
+  deletedAt    DateTime?  @db.Timestamp(0)
+  createdAt    DateTime   @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime   @default(now()) @db.Timestamp(0)
+  ChatGroups   ChatGroups @relation(fields: [chatGroupId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ChatMessages_ibfk_1")
+  Users        Users      @relation(fields: [userIdSender], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ChatMessages_ibfk_2")
+
+  @@index([chatGroupId], map: "chatGroupId")
+  @@index([userIdSender], map: "userIdSender")
+}
+
+model Permissions {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(255)
+  endpoint       String           @db.VarChar(255)
+  method         String           @db.VarChar(100)
+  module         String           @db.VarChar(100)
+  deletedBy      Int              @default(0)
+  isDeleted      Boolean          @default(false)
+  deletedAt      DateTime         @default(now()) @db.Timestamp(0)
+  createdAt      DateTime         @default(now()) @db.Timestamp(0)
+  updatedAt      DateTime         @default(now()) @db.Timestamp(0)
+  RolePermission RolePermission[]
+}
+
+model RolePermission {
+  id           Int         @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+  isActive     Boolean?    @default(true)
+  deletedBy    Int         @default(0)
+  isDeleted    Boolean     @default(false)
+  deletedAt    DateTime?   @db.Timestamp(0)
+  createdAt    DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime    @default(now()) @db.Timestamp(0)
+  Roles        Roles       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RolePermission_ibfk_1")
+  Permissions  Permissions @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RolePermission_ibfk_2")
+
+  @@index([permissionId], map: "permissionId")
+  @@index([roleId], map: "roleId")
+}
+
+model Roles {
+  id             Int              @id @default(autoincrement())
+  name           String?          @db.VarChar(255)
+  description    String?          @db.VarChar(255)
+  isActive       Boolean?         @default(true)
+  deletedBy      Int              @default(0)
+  isDeleted      Boolean          @default(false)
+  deletedAt      DateTime?        @db.Timestamp(0)
+  createdAt      DateTime         @default(now()) @db.Timestamp(0)
+  updatedAt      DateTime         @default(now()) @db.Timestamp(0)
+  RolePermission RolePermission[]
+  Users          Users[]
+}
+
+model Users {
+  id               Int                @id @default(autoincrement())
+  email            String             @unique(map: "email") @db.VarChar(255)
+  fullName         String?            @db.VarChar(255)
+  avatar           String?            @db.VarChar(255)
+  password         String?            @db.VarChar(255)
+  facebookId       String?            @unique(map: "facebookId") @db.VarChar(255)
+  googleId         String?            @unique(map: "googleId") @db.VarChar(255)
+  roleId           Int                @default(2)
+  deletedBy        Int                @default(0)
+  isDeleted        Boolean            @default(false)
+  deletedAt        DateTime?          @db.Timestamp(0)
+  createdAt        DateTime           @default(now()) @db.Timestamp(0)
+  updatedAt        DateTime           @default(now()) @db.Timestamp(0)
+  totpSecret       String?            @db.VarChar(255)
+  ChatGroupMembers ChatGroupMembers[]
+  ChatGroups       ChatGroups[]
+  ChatMessages     ChatMessages[]
+  Roles            Roles              @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Users_ibfk_1")
+
+  @@index([roleId], map: "roleId")
+}

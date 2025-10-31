@@ -1,0 +1,16 @@
+services:
+  BE:
+    image: img-be_cyber_community
+    container_name: con-be_cyber_community
+    ports:
+      - 3070:3069
+    env_file:
+      - .env
+
+  DB:
+    image: mysql
+    container_name: con-db_cyber_community
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234

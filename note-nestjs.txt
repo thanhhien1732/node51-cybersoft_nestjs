@@ -1,0 +1,56 @@
+NestJS
+
+http://localhost:3000/
+
+| router + controller (expressjs) = controller (nestjs)
+| dto = data transform object (validate)
+
+* Khởi tạo dự án
+| Terminal: npm i -g @nestjs/cli      (cài đặt global toàn máy nên chỉ cần cài 1 lần)
+|           nest new .                (tạo project tại folder đã tạo sẵn)
+|            - chọn npm
+
+* Lệnh tạo module api (auto)
+| Terminal: nest g resource <đường dẫn>
+|    Ví dụ: nest g resource modules/modules-api/auth (chọn: REST API - nhập: y)
+|           - Xóa folder /auth/entities và các file .spec.ts
+|    Ví dụ: nest g resource modules/modules-system/token (chọn: Microservice (non-HTTP) - nhập: n)
+|           - Xóa file controller.ts và các file .spec.ts
+|    Ví dụ: nest g resource modules/modules-api/totp (chọn: REST API - nhập: n)
+|           - Xóa các file .spec.ts
+
+prisma (ORM để tương tác với db)
+| Terminal: npm install prisma --save-dev
+|         - npx prisma (xem các lệnh của prisma)
+|        1. npx prisma init
+|        2. npm run prisma (thêm lệnh prisma vào package.json)
+|        3. modules-system/prisma/prisma.service.ts
+|        4. modules-system/prisma/prisma.module.ts
+
+Class Validator (thư viện validate cho API - dto)
+| Terminal: npm i --save class-validator class-transformer
+
+bcrypt (Mã hóa password - auth)
+| Terminal: npm i bcrypt
+|           npm i -D @types/bcrypt
+| Code: import * as bcrypt from 'bcrypt';
+
+jwt (Tạo token)
+| Terminal: npm install --save @nestjs/jwt
+
+passport (guard)
+| Terminal: npm i passport-jwt @nestjs/passport
+            npm i --save-dev @types/passport-jwt
+            npm i passport-custom
+
+Swagger (show API lên web)
+| Terminal: npm install --save @nestjs/swagger
+
+otplib (Xác thực 2 lớp - 2FA)
+| Terminal: npm i otplib
+| Code: import { authenticator } from 'otplib';
+
+qrcode (tạo qrcode để xác thực 2FA)
+| Terminal: npm i qrcode
+|           npm i --save-dev @types/qrcode
+| Code: import { toDataURL } from 'qrcode';
