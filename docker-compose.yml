@@ -1,6 +1,6 @@
 services:
   BE:
-    image: img-be_cyber_community
+    image: thanhhienngo/img-be_cyber_community:latest
     container_name: con-be_cyber_community
     ports:
       - 3070:3069

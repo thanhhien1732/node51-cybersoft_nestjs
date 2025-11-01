@@ -177,7 +177,7 @@ sudo apt-get update
 # Kiểm tra
 sudo systemctl status docker
 
-| 16. Vào repository GitHub của dự án 
+| 16. Vào trang repository GitHub của dự án 
 | 17. Chọn Settings
 | 18. Vào Actions/Runners
 | 19. Tại Runner image: Chọn Linux
@@ -194,6 +194,36 @@ sudo systemctl status docker
 | 23. Quay lại Actions/Runners ở GitHub và F5 lại  (nếu thấy hoàn toàn chấm xanh là thành công)
 | Như vậy GitHub và Server AWS đã kết nối được với nhau
 | 24. Tiếp tục viết lệnh cho cd.yml
+|            steps:
+|                - name: chạy lần đầu
+|                  run: sudo docker compose up -d
+| 25. Commit code lên GitHub
+| 26. Vào Actions trên trang repository GitHub của dự án 
+| 27. Sẽ thấy cd bị lỗi - nhưng sẽ tạo folder _work trong Terminal unbuntu (dùng lệnh ls -la để show)
+| 28. Tại Terminal unbuntu: cd _work/
+|                           ls -la
+|                           cd node51-cybersoft_nestjs/    (cd vào dự án của mình tạo)
+|                           ls -la
+|                           cd node51-cybersoft_nestjs/    (cd vào dự án của mình tạo)
+|                           ls -la                         (không còn thấy folder nào nữa là ok) 
+|                           touch docker-compose.yml       (tạo file docker-compose.yml)     
+|                           touch .env                     (tạo file dd.env)  
+|                           ls -la                         (show ra thấy có 2 file docker-compose.yml và .env là ok)
+Thêm code vào 2 file docker-compose.yml và .env vừa tạo      
+| 29. Tại Terminal unbuntu: 
+                        nano docker-compose.yml       (vào công cụ nano để chỉnh sửa file)
+| 30. Tại file docker-compose.yml ở vscode:     
+|           image: thanhhienngo/img-be_cyber_community:latest   (chỉnh sửa)
+| 31. Copy toàn bộ nội dung file docker-compose.yml ở vscode và paste vào công cụ nano
+| 32. Ở công cụ nano, nhấn các lệnh sau:
+|                           1. ^O Write Out (ctrl + O) - để save file lại
+|                           2. Enter
+|                           3. ^X Exit (ctrl + X) - để thoát ra
+|                           Vào lại nano docker-compose.yml nếu thấy không mất code là thành công
+| 33. Tương tự với file .env:
+|                        nano .env
+                                
+
 
 Connect lại khi bị Disconnect
 ssh lại (copy trên aws)
