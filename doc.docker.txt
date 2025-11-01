@@ -182,6 +182,8 @@ sudo systemctl status docker
 | 18. Vào Actions/Runners
 | 19. Tại Runner image: Chọn Linux
 | 20. Copy và Paste tất cả câu lệnh ở phần Download vào Terminal
+|       mkdir actions-runner && cd actions-runner
+|       mkdir be-cyber_community && cd be-cyber_community  (thêm dòng này)
 | 21. Copy và Paste câu lệnh đầu tiên ở Configure vào Terminal
 |       - Đến phần: Enter any additional labels (ex. label-1,label-2): [press Enter to skip] 
 |       - Nhập tên backend: be-cyber_community
@@ -192,6 +194,12 @@ sudo systemctl status docker
 | 23. Quay lại Actions/Runners ở GitHub và F5 lại  (nếu thấy hoàn toàn chấm xanh là thành công)
 | Như vậy GitHub và Server AWS đã kết nối được với nhau
 | 24. Tiếp tục viết lệnh cho cd.yml
+
+Connect lại khi bị Disconnect
+ssh lại (copy trên aws)
+cd home/
+cd actions-runner
+cd be-cyber_community
 
 # Lệnh Ubuntu hay dùng
     ls -la: show tất cả folder
