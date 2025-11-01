@@ -193,10 +193,10 @@ sudo systemctl status docker
 |       sudo ./svc.sh start
 | 23. Quay lại Actions/Runners ở GitHub và F5 lại  (nếu thấy hoàn toàn chấm xanh là thành công)
 | Như vậy GitHub và Server AWS đã kết nối được với nhau
-| 24. Tiếp tục viết lệnh cho cd.yml
-|            steps:
-|                - name: chạy lần đầu
-|                  run: sudo docker compose up -d
+| 24. Tiếp tục viết lệnh cho cd.yml:
+|                           steps:
+|                                 - name: chạy lần đầu
+|                                 run: sudo docker compose up -d
 | 25. Commit code lên GitHub
 | 26. Vào Actions trên trang repository GitHub của dự án 
 | 27. Sẽ thấy cd bị lỗi - nhưng sẽ tạo folder _work trong Terminal unbuntu (dùng lệnh ls -la để show)
@@ -222,19 +222,43 @@ Thêm code vào 2 file docker-compose.yml và .env vừa tạo
 |                           Vào lại nano docker-compose.yml nếu thấy không mất code là thành công
 | 33. Tương tự với file .env:
 |                        nano .env
-| 34. Commit code lên GitHub và vào Actions trên trang GitHub của dự án (cd thành công)         
+| 34. Commit và push code lên GitHub và vào Actions trên trang GitHub của dự án (cd thành công)         
 | 35. Tại Terminal unbuntu: sudo docker ps
 |                           sudo docker ps -a
 |                           sudo docker logs <contaier_id>  (quan sát có logs ra nội dung .env là thành công)
 |                    Ví dụ: sudo docker logs 05bc63807b53                     
 Kết nối Database
+| 36. Mở TablePlus và tạo MySQL mới
+| 37. Tạo theo hình có tên TablePlus-production ở ổ đĩa E:\CyberSoft\Backend\MySQL
+| 38. Connect vào và tạo database - đặt tên <db_cyber_community> như trong file .env
+| 39. Click chuột phải Import - From SQL dump... chọn đến file sql đã export trước đó
+| 40. Quay lại Terminal unbuntu: sudo docker ps -a
+|                                sudo docker start <container_id>
+|                                sudo docker ps  (có hiện tên image vùa tạo là ok)
+|                                sudo docker ps  (chạy thêm vài lần xem nếu ko mất image vừa tạo là ok)
+|                                sudo docker logs <container_id> (kiểm tra kết nối)
+| 41. Quay lại file app.constant.ts tắt console.log
+| 42. Comment 2 đoạn code này lại ở file cd.yml:
+|                                       # - name: chạy lần đầu
+|                                       #   run: sudo docker compose up -d
+| 43. Commit code và push lại lên GitHub
+| 44. Ở file cd.yml viết tiếp code: 
+|                           - name: Kéo image mới về
+|                             run: sudo docker compose pull BE
 |
+|                           - name: Tạo lại container BE
+|                             run: sudo docker compose up -d --no-deps --force-recreate BE
+| 45. Commit và push code lại lên GitHub
 
-Connect lại khi bị Disconnect
+
+Connect lại khi bị Disconnect (click chuột phải vào folder có chứa file pem)
 ssh lại (copy trên aws)
 cd home/
 cd actions-runner
 cd be-cyber_community
+cd _work/
+cd node51-cybersoft_nestjs/
+cd node51-cybersoft_nestjs/
 
 # Lệnh Ubuntu hay dùng
     ls -la: show tất cả folder

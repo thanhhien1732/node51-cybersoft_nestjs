@@ -11,5 +11,11 @@ jobs:
         runs-on: be-cyber_community
 
         steps:
-            - name: chạy lần đầu
-              run: sudo docker compose up -d
+            # - name: chạy lần đầu
+            #   run: sudo docker compose up -d
+
+            - name: Kéo image mới về
+              run: sudo docker compose pull BE
+
+            - name: Tạo lại container BE
+              run: sudo docker compose up -d --no-deps --force-recreate BE
